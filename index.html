@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chúc Mừng Ebe ngày 01/6 💖</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #d94f8b;
+      text-align: center;
+      padding: 20px;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 4px #fff;
+    }
+
+    #message {
+      font-size: 1.4rem;
+      margin: 20px auto;
+      max-width: 600px;
+      min-height: 80px;
+      line-height: 1.5;
+      color: #a50055;
+      font-weight: 600;
+      transition: opacity 0.8s ease;
+    }
+
+    .btn-group {
+      margin-top: 30px;
+    }
+
+    button {
+      background: #ff6f91;
+      border: none;
+      padding: 14px 30px;
+      border-radius: 50px;
+      color: white;
+      font-size: 1.1rem;
+      margin: 0 15px;
+      cursor: pointer;
+      box-shadow: 0 6px 10px rgba(255,111,145,0.5);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+    button:hover {
+      background: #ff4b6e;
+      transform: scale(1.1);
+      box-shadow: 0 8px 15px rgba(255,75,110,0.7);
+    }
+
+    /* Flower petals animation */
+    .petal {
+      position: fixed;
+      width: 15px;
+      height: 15px;
+      background: radial-gradient(circle at 40% 40%, #ffb6c1, #ff69b4);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      opacity: 0.8;
+      animation: fallPetal linear forwards;
+      pointer-events: none;
+      filter: drop-shadow(0 0 1px #d9487a);
+      z-index: 9999;
+    }
+    @keyframes fallPetal {
+      0% {
+        transform: translateY(-20px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Fireworks container */
+    #fireworks {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      z-index: 9998;
+      overflow: visible;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Chúc Mừng Ebe Ngày 01/6 - Quốc Tế Thiếu Nhi 🎉</h1>
+
+  <div class="btn-group">
+    <button data-msg="Chúc em ngày 1/6 vui vẻ, luôn xinh đẹp và hạnh phúc! Anh yêu em rất nhiều! 💖">Lời 1</button>
+    <button data-msg="Mong em mãi luôn rạng rỡ như ánh nắng mùa hè, ngày 1/6 thật vui nhé! 🌸">Lời 2</button>
+    <button data-msg="Em là niềm vui, là cả thế giới của anh! Chúc em ngày 1/6 thật ngọt ngào! 🍭">Lời 3</button>
+  </div>
+
+  <audio autoplay loop id="bgMusic" src="https://www.bensound.com/bensound-music/bensound-funkyelement.mp3"></audio>
+
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    // Hiệu ứng hoa rơi (petals)
+    function createPetal() {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      petal.style.left = Math.random() * window.innerWidth + 'px';
+      petal.style.animationDuration = 5 + Math.random() * 5 + 's';
+      petal.style.animationDelay = Math.random() * 5 + 's';
+      document.body.appendChild(petal);
+      setTimeout(() => petal.remove(), 10000);
+    }
+    setInterval(createPetal, 300);
+
+    // Nút chọn lời chúc
+    const buttons = document.querySelectorAll('.btn-group button');
+    const messageDiv = document.getElementById('message');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        messageDiv.style.opacity = 0;
+        setTimeout(() => {
+          messageDiv.textContent = btn.getAttribute('data-msg');
+          messageDiv.style.opacity = 1;
+          launchFireworks();
+        }, 500);
+      });
+    });
+
+    // Fireworks animation
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    let cw, ch;
+    function resize() {
+      cw = canvas.width = window.innerWidth;
+      ch = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Fireworks particles
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.color = color;
+        this.radius = 2 + Math.random() * 2;
+        this.speedX = (Math.random() - 0.5) * 5;
+        this.speedY = (Math.random() - 0.5) * 5;
+        this.alpha = 1;
+        this.decay = 0.01 + Math.random() * 0.02;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.alpha -= this.decay;
+        this.radius *= 0.96;
+      }
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.beginPath();
+        ctx.fillStyle = this.color;
+        ctx.shadowColor = this.color;
+        ctx.shadowBlur = 8;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    let particles = [];
+    function launchFireworks() {
+      // Tạo nhiều particle quanh tâm
+      const centerX = Math.random() * cw * 0.6 + cw * 0.2;
+      const centerY = Math.random() * ch * 0.4 + ch * 0.3;
+      const colors = ['#ff4b6e', '#ff8c94', '#ffb6b9', '#fcd5ce', '#f8edeb'];
+
+      for(let i=0; i<50; i++) {
+        particles.push(new Particle(centerX, centerY, colors[Math.floor(Math.random() * colors.length)]));
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, cw, ch);
+      for(let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        if(p.alpha <= 0 || p.radius <= 0.1) {
+          particles.splice(i,1);
+          continue;
+        }
+        p.update();
+        p.draw();
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+</body>
+</html>
